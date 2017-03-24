@@ -22,4 +22,4 @@ class InvalidPostcodeException(Exception):
         self.value = value
 
     def __str__(self):
-        return "'%s' is not a ." % (self.value, MAX_LENGTH)
+        return "'%s' is not a valid post code." % (self.value)
