@@ -34,16 +34,28 @@ def _validate_length(code):
 
 def _validate_inward(code):
     inward = _get_inward(code)
-    if not re.search(constants.INwWARD_PATTERN, inward):
-        raise exceptions.InvalidInwardException(code)
+    if not re.search(constants.INWARD_PATTERN, inward):
+        raise exceptions.InvalidInwardException(inward)
+
+    return True
+
+
+def _validate_outward_format_one(outward):
+    if not re.search(constants.OUTWARD_PATTERN_FORMAT_ONE, outward):
+        raise exceptions.InvalidOutwardException(outward)
+
+    return True
+
+
+def _validate_outward_format_two(outward):
+    if not re.search(constants.OUTWARD_PATTERN_FORMAT_TWO, outward):
+        raise exceptions.InvalidOutwardException(outward)
 
     return True
 
 
 def _validate_outward(code):
     outward = _get_outward(code)
-    if not re.search(constants.OUTWARD_PATTERN, outward):
-        raise exceptions.InvalidOutwardException(code)
 
     return True
 

@@ -1,4 +1,4 @@
-from ukpcode.constants import MAX_LENGTH, MIN_LENGTH, INWARD_LENGTH
+from ukpcode.constants import MAX_LENGTH, MIN_LENGTH
 
 
 class InvalidPostcodeException(Exception):
@@ -30,7 +30,7 @@ class InvalidInwardException(InvalidPostcodeException):
         self.value = value
 
     def __str__(self):
-        return "'%s' is not a valid inward." % self.value[-INWARD_LENGTH:]
+        return "'%s' is not a valid inward." % self.value
 
 
 class InvalidOutwardException(InvalidPostcodeException):
@@ -38,4 +38,4 @@ class InvalidOutwardException(InvalidPostcodeException):
         self.value = value
 
     def __str__(self):
-        return "'%s' is not a valid outward." % self.value[:-INWARD_LENGTH]
+        return "'%s' is not a valid outward." % self.value

@@ -7,9 +7,9 @@ from ukpcode import exceptions
 
 class UKPCodeTest(unittest.TestCase):
 
-    def get_valid_letters(self, invalid):
-        invalid_letters = list(invalid)
-        return list(set(ascii_uppercase) - set(invalid_letters))
+    def get_inverted_letters(self, letters):
+        letters_list = list(letters)
+        return list(set(ascii_uppercase) - set(letters_list))
 
 
     def test_valid_min_length(self):
@@ -26,6 +26,7 @@ class UKPCodeTest(unittest.TestCase):
         with self.assertRaises(exceptions.MinLengthException):
             ukpcode._validate_length("W0 WX")
 
+
     def test_valid_max_length(self):
         self.assertTrue(ukpcode._validate_length("EC1ABB1"))
 
@@ -38,7 +39,8 @@ class UKPCodeTest(unittest.TestCase):
 
     def test_invalid_formatted_max_length(self):
         with self.assertRaises(exceptions.MaxLengthException):
-            ukpcode._validate_length("EC1A1 BB1")
+            ukpcode._validate_length("EC1A1 BBB")
+
 
     def test_valid_inward(self):
         self.assertTrue(ukpcode._validate_inward("EC1A 1BB"))
@@ -46,11 +48,20 @@ class UKPCodeTest(unittest.TestCase):
     def test_invalid_inward(self):
         with self.assertRaises(exceptions.InvalidInwardException):
             ukpcode._validate_inward("EC1A BBB")
+        with self.assertRaises(exceptions.InvalidInwardException):
+            ukpcode._validate_inward("EC1A 1B1")
+        with self.assertRaises(exceptions.InvalidInwardException):
+            ukpcode._validate_inward("EC1A 11B")
 
     def test_valid_letters_to_inkward(self):
-        for valid in self.get_valid_letters(constants.INVALID_LETTERS_TO_INWARD):
+        invalid_letters = constants.INVALID_LETTERS_TO_INWARD
+        for valid in self.get_inverted_letters(invalid_letters):
             self.assertTrue(ukpcode._validate_inward("EC1A 1%sB" % valid))
             self.assertTrue(ukpcode._validate_inward("EC1A 1B%s" % valid))
+
+    def test_valid_numbers_to_inkward(self):
+        for valid in range(10):
+            self.assertTrue(ukpcode._validate_inward("EC1A %sBB" % valid))
 
     def test_invalid_letters_to_inkward(self):
         for invalid in constants.INVALID_LETTERS_TO_INWARD:
@@ -59,14 +70,69 @@ class UKPCodeTest(unittest.TestCase):
             with self.assertRaises(exceptions.InvalidInwardException):
                 ukpcode._validate_inward("EC1A 1B%s" % invalid)
 
+
+    def test_valid_outward_first_digit(self):
+        invalid_letters = constants.INVALID_LETTERS_TO_FIRST_DIGIT
+        for valid in self.get_inverted_letters(invalid_letters):
+            self.assertTrue(
+                ukpcode._validate_outward_format_one("%sC1A" % valid)
+            )
+
     def test_invalid_outward_first_digit(self):
         for invalid in constants.INVALID_LETTERS_TO_FIRST_DIGIT:
             with self.assertRaises(exceptions.InvalidOutwardException):
-                ukpcode._validate_outward("%sC1A 1BB" % invalid)           
+                ukpcode._validate_outward_format_one("%sC1A" % invalid)
 
-    def test_valid_outward_first_digit(self):
-        for valid in self.get_valid_letters(constants.INVALID_LETTERS_TO_FIRST_DIGIT):
-            self.assertTrue(ukpcode._validate_outward("%sC1A 1BB" % valid))
+    def test_outward_first_format_valid_second_digit(self):
+        invalid_letters = constants.INVALID_LETTERS_TO_SECOND_DIGIT
+        for valid in self.get_inverted_letters(invalid_letters):
+            outward = "E%s1A" % valid
+            self.assertTrue(ukpcode._validate_outward_format_one(outward))
+
+    def test_outward_first_format_invalid_second_digit(self):
+        for invalid in constants.INVALID_LETTERS_TO_SECOND_DIGIT:
+            with self.assertRaises(exceptions.InvalidOutwardException):
+                ukpcode._validate_outward_format_one("E%s1A" % invalid)
+
+    def test_outward_first_format_valid_third_digit(self):
+        for valid in range(10):
+            outward = "EC%sA" % valid
+            self.assertTrue(ukpcode._validate_outward_format_one(outward))
+
+    def test_outward_first_format_invalid_third_digit(self):
+        with self.assertRaises(exceptions.InvalidOutwardException):
+            ukpcode._validate_outward_format_one("ECAA")
+
+    def test_outward_first_format_valid_forth_digit(self):
+        for valid in constants.VALID_LETTERS_TO_FORTH_DIGIT:
+            outward = "EC1%s" % valid
+            self.assertTrue(ukpcode._validate_outward_format_one(outward))
+
+    def test_outward_first_format_invalid_forth_digit(self):
+        valid_letters = constants.VALID_LETTERS_TO_FORTH_DIGIT
+        for invalid in self.get_inverted_letters(valid_letters):
+            with self.assertRaises(exceptions.InvalidOutwardException):
+                ukpcode._validate_outward_format_one("EC1%s" % invalid)
+
+    def test_outward_second_format_valid_second_digit(self):
+        for valid in range(10):
+            outward = "W%sA" % valid
+            self.assertTrue(ukpcode._validate_outward_format_two(outward))
+
+    def test_outward_second_format_invalid_second_digit(self):
+        with self.assertRaises(exceptions.InvalidOutwardException):
+            ukpcode._validate_outward_format_one("WAA")
+
+    def test_outward_second_format_valid_third_digit(self):
+        for valid in constants.VALID_LETTERS_TO_THIRD_DIGIT:
+            outward = "W1%s" % valid
+            self.assertTrue(ukpcode._validate_outward_format_two(outward))
+
+    def test_outward_second_format_invalid_third_digit(self):
+        valid_letters = constants.VALID_LETTERS_TO_THIRD_DIGIT
+        for invalid in self.get_inverted_letters(valid_letters):
+            with self.assertRaises(exceptions.InvalidOutwardException):
+                ukpcode._validate_outward_format_two("W1%s" % invalid)
 
 
     def test_get_inward(self):
