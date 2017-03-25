@@ -14,8 +14,7 @@ def _validate_length(code):
 
 def _validate_inward(code):
     inward = _get_inward(code)
-    pattern = r"^\d[A-Z]{2}$"
-    if not re.search(pattern, inward):
+    if not re.search(constants.INwWARD_PATTERN, inward):
         raise exceptions.InvalidPostcodeException(code)
 
 

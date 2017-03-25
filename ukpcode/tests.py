@@ -1,34 +1,42 @@
 import unittest
 import ukpcode
-from ukpcode.exceptions import MinLengthException, MaxLengthException, InvalidPostcodeException
+from ukpcode import constants
+from ukpcode import exceptions
 
 
 class UKPCodeTest(unittest.TestCase):
 
     def test_validate_min_length(self):
         ukpcode._validate_length("M11AS")
-        with self.assertRaises(MinLengthException):
+        with self.assertRaises(exceptions.MinLengthException):
             ukpcode._validate_length("M11A")
 
     def test_validate_formatted_min_length(self):
         ukpcode._validate_length("W0 WX3")
-        with self.assertRaises(MinLengthException):
+        with self.assertRaises(exceptions.MinLengthException):
             ukpcode._validate_length("W0 WX")
 
     def test_validate_max_length(self):
         ukpcode._validate_length("EC1ABB1")
-        with self.assertRaises(MaxLengthException):
+        with self.assertRaises(exceptions.MaxLengthException):
             ukpcode._validate_length("EC1A1BB1")
 
     def test_validate_formatted_max_length(self):
         ukpcode._validate_length("EC1A BB1")
-        with self.assertRaises(MaxLengthException):
+        with self.assertRaises(exceptions.MaxLengthException):
             ukpcode._validate_length("EC1A1 BB1")
 
     def test_validate_inward(self):
         ukpcode._validate_inward("EC1A 1BB")
-        with self.assertRaises(InvalidPostcodeException):
+        with self.assertRaises(exceptions.InvalidPostcodeException):
             ukpcode._validate_inward("EC1A BBB")
+
+    def test_invalid_letters_to_inkward(self):
+        for invalid in constants.INVALID_LETTERS_TO_INWARD:
+            with self.assertRaises(exceptions.InvalidPostcodeException):
+                ukpcode._validate_inward("EC1A 1%sB" % invalid)
+            with self.assertRaises(exceptions.InvalidPostcodeException):
+                ukpcode._validate_inward("EC1A 1B%s" % invalid)
 
 
     def test_get_inward(self):
