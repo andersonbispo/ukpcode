@@ -40,16 +40,43 @@ def _validate_inward(code):
     return True
 
 
-def _validate_outward_format_one(outward):
+def _is_valid_outward_format_one(outward):
     if not re.search(constants.OUTWARD_PATTERN_FORMAT_ONE, outward):
-        raise exceptions.InvalidOutwardException(outward)
+        return False
 
     return True
 
 
-def _validate_outward_format_two(outward):
+def _is_valid_outward_format_two(outward):
     if not re.search(constants.OUTWARD_PATTERN_FORMAT_TWO, outward):
-        raise exceptions.InvalidOutwardException(outward)
+        return False
+
+    return True
+
+
+def _is_valid_outward_format_three(outward):
+    if not re.search(constants.OUTWARD_PATTERN_FORMAT_THREE, outward):
+        return False
+
+    return True
+
+
+def _is_valid_outward_format_four(outward):
+    if not re.search(constants.OUTWARD_PATTERN_FORMAT_FOUR, outward):
+        return False
+
+    return True
+
+
+def _is_valid_outward_format_five(outward):
+    if not re.search(constants.OUTWARD_PATTERN_FORMAT_FIVE, outward):
+        return False
+
+    return True
+
+def _is_valid_outward_format_six(outward):
+    if not re.search(constants.OUTWARD_PATTERN_FORMAT_SIX, outward):
+        return False
 
     return True
 
@@ -57,6 +84,13 @@ def _validate_outward_format_two(outward):
 def _validate_outward(code):
     outward = _get_outward(code)
 
+    if not _is_valid_outward_format_one(outward) and \
+       not _is_valid_outward_format_two(outward) and \
+       not _is_valid_outward_format_three(outward) and \
+       not _is_valid_outward_format_four(outward) and \
+       not _is_valid_outward_format_five(outward) and \
+       not _is_valid_outward_format_six(outward):
+            raise exceptions.InvalidInwardException(outward)
     return True
 
 
