@@ -7,7 +7,16 @@ If the format function is called with an invalid post code, the function will ra
 
 The ukpcode accepts, in both functions, the code in lower case and with extra blank spaces.
 
+Install
+-------
+Install with [Pip](<http://www.pip-installer.org>):
 
+```
+  pip install ukpcode
+```
+
+How to use it
+-------------
 ```
 import ukpcode
 
