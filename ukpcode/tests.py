@@ -181,6 +181,9 @@ class UKPCodeTest(unittest.TestCase):
     def test_is_valid(self):
         self.assertTrue(ukpcode.is_valid("EC1A1BB"))
 
+    def test_is_valid_lowercase(self):
+        self.assertTrue(ukpcode.is_valid("ec1a1bb"))
+
     def test_min_length_is_not_valid(self):
         self.assertFalse(ukpcode.is_valid("E1BB"))
 
@@ -208,6 +211,9 @@ class UKPCodeTest(unittest.TestCase):
 
     def test_format_unnecessary_spaces(self):
         self.assertEqual("M1 1AE", ukpcode.format(" M1  1AE  "))
+
+    def test_format_lowercase(self):
+        self.assertEqual("EC1A 1BB", ukpcode.format("ec1a1bb"))
 
 if __name__ == '__main__':
     unittest.main()
